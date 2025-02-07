@@ -64,6 +64,14 @@ cd train
 pip install -e .
 ```
 
+在安装的时候可能会遇到关于flash attention 使用的问题：
+```bash
+ so: undefined symbol: _ZN3c104cuda9SetDeviceEi” 
+```
+falsh attention 需要 和python版本呢 torch版本 cuda版本都匹配
+[如何安装特定版本的flash attention](https://triton.csdn.net/672c540959bcf8384a7b82e7.html)
+
+
 ### Reproducing SimpleRL-Zero
 The minimum hardware requirement for training is 6 H/A100-80G GPUs (note: this configuration has not been tested yet). To accelerate our experiments, we used 4 nodes, each equipped with 8 H/A100-80G GPUs, to train on 8K MATH examples for 120 steps over approximately 1.5 days, achieving convergence. However, our results indicate that satisfactory performance can be achieved with around 60 steps, which requires less than one day of training using 4 nodes.
 
