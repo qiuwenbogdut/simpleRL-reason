@@ -1,5 +1,5 @@
 # Set visible GPUs (使用1,2,7三个GPU)
-export CUDA_VISIBLE_DEVICES="1,2,7"
+export CUDA_VISIBLE_DEVICES="2,3,4"
 
 HDFS_HOME=/data_local/qwb/simpleRL-reason
 RUN_NAME=Qwen2.5-Math-7B_ppo_from_base_math_lv35
@@ -16,10 +16,10 @@ python3 /data_local/qwb/simpleRL-reason/train/openrlhf/cli/train_ppo_ray_box.py 
     --vllm_num_engines 1 \
     --vllm_tensor_parallel_size 1 \
     --colocate_actor_ref \
-    --pretrain $HDFS_HOME/model_hub/models--Qwen--Qwen2.5-Math-7B/snapshots/b101308fe89651ea5ce025f25317fea6fc07e96e \
+    --pretrain /dataset/LLM_Model_Path/Qwen/Qwen2.5-Math-7B \
     --save_path $HDFS_HOME/checkpoints/$RUN_NAME \
     --micro_train_batch_size 2 \
-    --train_batch_size 128 \
+    --train_batch_size 64 \
     --micro_rollout_batch_size 2 \
     --rollout_batch_size 1024 \
     --temperature 0.6 \

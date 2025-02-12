@@ -72,6 +72,16 @@ falsh attention 需要 和python版本呢 torch版本 cuda版本都匹配
 [如何安装特定版本的flash attention](https://triton.csdn.net/672c540959bcf8384a7b82e7.html)
 
 
+### 自己探索的环境安装流程：
+1. 安装一下torch 版本 2.5.1 cuda12.1
+2. 安装一下vllm pip install 直接安装
+3. 安装一下flash attention 匹配torch 和 cuda版本呢 官网寻找 （突然发现 flash attention 安装包 没有找到和cuda12.1 完全适配的）
+4. DeepSpeed 安装的版本是0.15.0 依赖的版本是cuda11.7 （建议安装cuda11.8 的版本）
+5. 进入 ctrain 直接进行安装
+
+或者 基于cuda11.8 进行安装
+
+
 ### Reproducing SimpleRL-Zero
 The minimum hardware requirement for training is 6 H/A100-80G GPUs (note: this configuration has not been tested yet). To accelerate our experiments, we used 4 nodes, each equipped with 8 H/A100-80G GPUs, to train on 8K MATH examples for 120 steps over approximately 1.5 days, achieving convergence. However, our results indicate that satisfactory performance can be achieved with around 60 steps, which requires less than one day of training using 4 nodes.
 
@@ -82,6 +92,12 @@ ray start --head --node-ip-address 0.0.0.0 --num-gpus 8
 
 # if you want to launch ray on more nodes, use
 ray start --address {MASTER-NODE-ADDRESS}:6379  --num-gpus 8
+```
+
+如果希望关掉 ray 可以使用脚本
+```bash
+# 停止所有ray进程
+ray stop
 ```
 
 Next, submit the training job from the master node:
@@ -98,7 +114,7 @@ ray job submit --address="http://127.0.0.1:8265" \
 ray job submit --address="http://127.0.0.1:8265" \
         --runtime-env-json='{
         "pip": ["ray==2.12.0", "latex2sympy2", "timeout_decorator"]
-    }' -- /bin/bash examples/script/train_ppo_qwen_base_math_lv35_1_node.sh
+    }' -- /bin/bash /data_local/qwb/simpleRL-reason/train/examples/script/train_ppo_qwen_base_math_lv35_1_node_self.sh
 
 ```
 
