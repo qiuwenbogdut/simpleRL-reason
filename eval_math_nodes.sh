@@ -32,6 +32,7 @@ output_dir="eval_results"
 overwrite=false
 n_sampling=1
 specific_steps=""
+tp_size=2  # Changed from 5 to 2 to be compatible with 14 attention heads
 while [[ $# -gt 0 ]]; do
     case $1 in
         --run_name)
@@ -107,7 +108,7 @@ fi
 
 eval_script_path="sh/eval.sh"
 
-HDFS_HOME=TO_BE_FILLED
+HDFS_HOME=/qiu/qiuwenbo/simpleRL-reason
 
 base_checkpoint_path="${HDFS_HOME}/checkpoints/${RUN_NAME}"
 

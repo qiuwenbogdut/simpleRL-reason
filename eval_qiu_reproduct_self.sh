@@ -1,0 +1,11 @@
+bash eval_math_nodes.sh \
+    --run_name eval_Qwen-2.5-0.5B-SimpleRL-Zoo-reproduct   \
+    --init_model Qwen-2.5-0.5B-SimpleRL-Zoo-reproduct \
+    --template qwen-boxed  \
+    --tp_size 2 \
+    --add_step_0 true  \
+    --temperature 1.0 \
+    --top_p 0.95 \
+    --max_tokens 16000 \
+    --benchmarks aime24,amc23,math500,olympiadbench,gsm8k,minerva_math \
+    --n_sampling 1

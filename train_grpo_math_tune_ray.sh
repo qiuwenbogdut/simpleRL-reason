@@ -8,15 +8,15 @@ export RAY_DEDUP_LOGS=1
 
 
 export PROJECT_NAME=verl_train
-export WANDB_API_KEY=TO_BE_FILLED
+export WANDB_API_KEY=680e64656f6456ac1ee39568a956bed2575ff585
 export WANDB_OFFICIAL=1
 export VLLM_ATTENTION_BACKEND=XFORMERS
-export HDFS_DATA_PATH=TO_BE_FILLED
-export HDFS_MODEL_PATH=TO_BE_FILLED
-export HDFS_CHECKPOINT_PATH=TO_BE_FILLED
-export HDFS_LOG_PATH=TO_BE_FILLED
+export HDFS_DATA_PATH=/qiu/qiuwenbo/simpleRL-reason/train_test_data
+export HDFS_MODEL_PATH=/qiu/qiuwenbo/simpleRL-reason/base_models/
+export HDFS_CHECKPOINT_PATH=/qiu/qiuwenbo/simpleRL-reason/checkpoints
+export HDFS_LOG_PATH=/qiu/qiuwenbo/simpleRL-reason/checkpoints
 export RUN_NAME=verl-grpo
-export ARNOLD_WORKER_NUM=TO_BE_FILLED # number of nodes you want to use 
+export ARNOLD_WORKER_NUM=1 # number of nodes you want to use 
 
 
 # Default values
@@ -168,6 +168,12 @@ ray job submit --address=${HEAD_IP}:${HEAD_PORT} \
   --entrypoint-num-cpus=1 \
   --runtime-env-json='{
         "working_dir": "'${WORKING_DIR}'",
+        "excludes": [
+          "base_models/*/model.safetensors",
+          "base_models/*/tokenizer.json",
+          "examples/simplelr_math_eval/data/tabmwp/test.jsonl",
+          ".git/**"
+        ],
         "env_vars": {
           "http_proxy": "",
           "https_proxy": ""
