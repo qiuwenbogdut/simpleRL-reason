@@ -1,6 +1,6 @@
 bash eval_math_nodes.sh \
-    --run_name eval_Qwen-2.5-0.5B-SimpleRL-Zoo   \
-    --init_model Qwen-2.5-0.5B-SimpleRL-Zoo \
+    --run_name eval_Qwen-2.5-0.5B   \
+    --init_model Qwen-2.5-0.5B \
     --template qwen-boxed  \
     --tp_size 2 \
     --add_step_0 true  \

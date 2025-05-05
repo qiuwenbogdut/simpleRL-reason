@@ -498,8 +498,8 @@ def plot_training_progress(results, output_dir, benchmarks=None):
 
         # Create figures
         n_benchmarks = len(all_benchmarks) + 1  # +1 for average
-        n_cols = 3
-        n_rows = (n_benchmarks + n_cols - 1) // n_cols
+        n_cols = 2  # Two columns for box ratio and token length
+        n_rows = (n_benchmarks + 1) // 2  # Calculate rows needed for all benchmarks
         
         # Create three separate figures with the same layout
         for plot_type in ['acc_tokens', 'acc_keywords', 'tokens_keywords', 'acc_pass_acc']:
@@ -777,6 +777,20 @@ def plot_training_progress(results, output_dir, benchmarks=None):
         models = sort_checkpoints(models)
         
         # Extract checkpoint numbers for x-axis
+        checkpoints = []
+        for model in models:
+            if 'checkpoint-final' in model:
+                checkpoints.append('final')
+            else:
+                checkpoint_match = re.search(r'checkpoint-(\d+)', model)
+                if checkpoint_match:
+                    checkpoints.append(checkpoint_match.group(1))
+                    continue
+                global_step_match = re.search(r'global_step[_]?(\d+)', model)
+                if global_step_match:
+                    checkpoints.append(f'step{global_step_match.group(1)}')
+                else:
+                    checkpoints.append('unknown')
 
         # Create figures for clip ratio and stop tokens relationships
         for plot_type in ['clip_ratio', 'avg_stop_tokens']:
@@ -892,6 +906,27 @@ def plot_training_progress(results, output_dir, benchmarks=None):
             plt.close(fig)
             
     #Create figure for box_ratio vs tokens plot
+    # Calculate n_rows and n_cols for the new plots
+    n_benchmarks = len(all_benchmarks) + 1  # +1 for average
+    n_cols = 2  # Two columns for box ratio and token length
+    n_rows = (n_benchmarks + 1) // 2  # Calculate rows needed for all benchmarks
+    
+    # Extract checkpoint numbers for x-axis
+    checkpoints = []
+    for model in models:
+        if 'checkpoint-final' in model:
+            checkpoints.append('final')
+        else:
+            checkpoint_match = re.search(r'checkpoint-(\d+)', model)
+            if checkpoint_match:
+                checkpoints.append(checkpoint_match.group(1))
+                continue
+            global_step_match = re.search(r'global_step[_]?(\d+)', model)
+            if global_step_match:
+                checkpoints.append(f'step{global_step_match.group(1)}')
+            else:
+                checkpoints.append('unknown')
+    
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5*n_rows))
     fig.suptitle(f'Training Progress - {base_name} (Box Ratio and Token Length)')
     axes = axes.flatten()
@@ -986,6 +1021,27 @@ def plot_training_progress(results, output_dir, benchmarks=None):
     plt.close(fig)
     
     # Create the plot for Repeat Ratio vs Tokens
+    # Recalculate n_rows and n_cols for the repeat ratio plot
+    n_benchmarks = len(all_benchmarks) + 1  # +1 for average
+    n_cols = 2  # Two columns for repeat ratio and token length
+    n_rows = (n_benchmarks + 1) // 2  # Calculate rows needed for all benchmarks
+    
+    # Extract checkpoint numbers for x-axis
+    checkpoints = []
+    for model in models:
+        if 'checkpoint-final' in model:
+            checkpoints.append('final')
+        else:
+            checkpoint_match = re.search(r'checkpoint-(\d+)', model)
+            if checkpoint_match:
+                checkpoints.append(checkpoint_match.group(1))
+                continue
+            global_step_match = re.search(r'global_step[_]?(\d+)', model)
+            if global_step_match:
+                checkpoints.append(f'step{global_step_match.group(1)}')
+            else:
+                checkpoints.append('unknown')
+    
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5*n_rows))
     fig.suptitle(f'Training Progress - {base_name} (Repeat Ratio and Token Length)')
     axes = axes.flatten()
@@ -1117,7 +1173,15 @@ def main(args):
     if args.use_wandb:
         print("\nSyncing to wandb...")
         if args.wandb_api_key:
+            if len(args.wandb_api_key) != 40:
+                print("Warning: Invalid wandb API key length. API key must be 40 characters long.")
+                print("Please provide a valid API key or disable wandb sync with --use_wandb False")
+                return
             wandb.login(key=args.wandb_api_key)
+        else:
+            print("Warning: No wandb API key provided.")
+            print("Please provide a valid API key or disable wandb sync with --use_wandb False")
+            return
         sync_to_wandb(args, results, args.wandb_project, df, args.plot_dir, args.output_path)
         print("Wandb sync completed!")
 
@@ -1129,7 +1193,8 @@ if __name__ == "__main__":
     parser.add_argument("--wandb_run_name", type=str, default=None)
     parser.add_argument("--plot_dir", type=str, default=None)
     parser.add_argument("--wandb_project", type=str, default="math-eval-results")
-    parser.add_argument("--wandb_api_key", type=str, default="1234567890")
+    parser.add_argument("--wandb_api_key", type=str, default=None,
+                       help="Weights & Biases API key (must be 40 characters long)")
     parser.add_argument("--use_wandb", action="store_true")
     parser.add_argument("--num_threads", type=int, default=8)
     parser.add_argument("--benchmarks", type=str, 
